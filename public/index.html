@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Telescope 4.1</title>
+  <link href="/assets/google-fonts.css" rel="stylesheet">
+  <link href="/assets/github-dark.min.css" rel="stylesheet">
+  <script src="/assets/highlight.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #131313;
+      color: #e5e2e1;
+      font-family: 'Inter', sans-serif
+    }
+
+    :root {
+      --bg: #131313;
+      --surface: #201f1f;
+      --surface2: #2a2a2a;
+      --surface3: #353534;
+      --border: #414755;
+      --border2: #8b90a0;
+      --text: #e5e2e1;
+      --text2: #c1c6d7;
+      --text3: #8b90a0;
+      --accent: #adc6ff;
+      --accent2: #4b8eff;
+      --danger: #ffb4ab;
+      --success: #4caf76;
+      --warn: #f0a500;
+      --radius: 12px;
+      --radius2: 16px;
+      --radius3: 24px
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: inherit;
+      font: inherit
+    }
+
+    input,
+    textarea {
+      background: none;
+      border: none;
+      color: inherit;
+      font: inherit;
+      outline: none
+    }
+
+    textarea {
+      resize: none
+    }
+
+    /* ── SCREENS ── */
+    #authScreen,
+    #appScreen,
+    #adminScreen {
+      width: 100%;
+      height: 100vh
+    }
+
+    #appScreen,
+    #adminScreen {
+      display: none
+    }
+
+    /* ── AUTH ── */
+    #authScreen {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: var(--bg)
+    }
+
+    .auth-wrap {
+      width: 100%;
+      max-width: 420px
+    }
+
+    .auth-card {
+      background: rgba(32, 31, 31, 0.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(65, 71, 85, 0.5);
+      border-radius: 24px;
+      padding: 40px 32px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3)
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px
+    }
+
+    .auth-logo-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: 'Geist', sans-serif
+    }
+
+    .auth-logo-text {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -.5px;
+      font-family: 'Geist', sans-serif
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px
+    }
+
+    .auth-tab {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text2);
+      transition: all .2s;
+      text-align: center;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Geist', sans-serif;
+      cursor: pointer
+    }
+
+    .auth-tab.active {
+      background: var(--surface2);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2)
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .auth-input {
+      background: rgba(42, 42, 42, 0.5);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--text);
+      transition: border .2s;
+      min-height: 50px
+    }
+
+    .auth-input:focus {
+      border-color: var(--accent);
+      outline: none;
+      box-shadow: 0 0 0 1px var(--accent)
+    }
+
+    .auth-input::placeholder {
+      color: var(--text3)
+    }
+
+    .auth-submit {
+      background: var(--text);
+      color: var(--bg);
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all .2s;
+      min-height: 50px;
+      font-family: 'Geist', sans-serif;
+      margin-top: 4px
+    }
+
+    .auth-submit:hover {
+      background: var(--accent);
+      color: #000
+    }
+
+    .auth-submit:active {
+      transform: scale(0.98)
+    }
+
+    .auth-msg {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-align: center;
+      display: none
+    }
+
+    .auth-msg.err {
+      background: rgba(238, 85, 85, .12);
+      color: #f87171;
+      display: block
+    }
+
+    .auth-msg.ok {
+      background: rgba(76, 175, 118, .12);
+      color: #86efac;
+      display: block
+    }
+
+    .auth-sub {
+      text-align: center;
+      font-size: 14px;
+      color: var(--text2);
+      margin-top: 16px;
+      font-family: 'Inter', sans-serif
+    }
+
+    .auth-sub a {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity .2s
+    }
+
+    .auth-sub a:hover {
+      opacity: .8;
+      text-decoration: underline
+    }
+
+    /* ── APP LAYOUT ── */
+    #appScreen {
+      display: flex
+    }
+
+    .sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: relative;
+      transition: transform .25s
+    }
+
+    .sidebar-head {
+      padding: 14px 12px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600
+    }
+
+    .sidebar-logo-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff
+    }
+
+    .new-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 11px;
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      font-size: 12.5px;
+      color: var(--text2);
+      transition: all .15s;
+      min-height: 34px
+    }
+
+    .new-btn:hover {
+      background: var(--surface2);
+      color: var(--text)
+    }
+
+    .new-btn:active {
+      background: var(--surface3)
+    }
+
+    .sidebar-section {
+      padding: 14px 12px 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: .06em;
+      text-transform: uppercase
+    }
+
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2px 8px
+    }
+
+    .chat-list::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .chat-list::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 2px
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .12s;
+      min-height: 38px;
+      gap: 6px
+    }
+
+    .chat-item:hover {
+      background: var(--surface2)
+    }
+
+    .chat-item.active {
+      background: var(--surface3)
+    }
+
+    .chat-title {
+      font-size: 13.5px;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1
+    }
+
+    .chat-del {
+      color: var(--text3);
+      font-size: 13px;
+      padding: 3px 5px;
+      border-radius: 4px;
+      opacity: 0;
+      transition: opacity .15s;
+      min-height: 28px;
+      min-width: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .chat-item:hover .chat-del {
+      opacity: 1
+    }
+
+    .chat-del:hover {
+      color: var(--danger)
+    }
+
+    .sidebar-footer {
+      padding: 10px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s;
+      min-height: 46px
+    }
+
+    .user-row:hover {
+      background: var(--surface2)
+    }
+
+    .user-ava {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0
+    }
+
+    .user-name {
+      font-size: 13.5px;
+      color: var(--text);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .logout-btn {
+      color: var(--text3);
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 4px;
+      min-height: 30px;
+      min-width: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s
+    }
+
+    .logout-btn:hover {
+      color: var(--danger)
+    }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      min-width: 0
+    }
+
+    /* ── TOPBAR (mobile) ── */
+    .topbar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: var(--bg)
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 15px;
+      font-weight: 600
+    }
+
+    .menu-btn {
+      color: var(--text2);
+      font-size: 20px;
+      padding: 4px;
+      min-height: 36px;
+      min-width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .topbar-new {
+      color: var(--text2);
+      font-size: 20px;
+      padding: 4px;
+      min-height: 36px;
+      min-width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    /* ── CHAT AREA ── */
+    .chat-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0
+    }
+
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--border2) transparent;
+    }
+
+    .chat-area::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 4px;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb:hover {
+      background: var(--text2);
+    }
+
+    .welcome {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 32px 20px;
+      text-align: center;
+      min-height: 60vh
+    }
+
+    .welcome-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px
+    }
+
+    .welcome h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.3px
+    }
+
+    .welcome p {
+      color: var(--text2);
+      font-size: 14.5px
+    }
+
+    .msgs {
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-width: 760px;
+      width: 100%;
+      margin: 0 auto
+    }
+
+    .msg {
+      display: flex;
+      gap: 10px;
+      padding: 6px 0;
+      align-items: flex-start
+    }
+
+    .msg.user {
+      flex-direction: row-reverse
+    }
+
+    .msg-ava {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 2px
+    }
+
+    .msg.user .msg-ava {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .msg.assistant .msg-ava {
+      background: var(--surface3);
+      color: var(--text2)
+    }
+
+    .msg-body {
+      flex: 1;
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--text);
+      word-break: break-word
+    }
+
+    .msg.user .msg-body {
+      background: var(--surface2);
+      padding: 10px 14px;
+      border-radius: 16px 16px 4px 16px;
+      max-width: 82%;
+      border: 1px solid var(--border)
+    }
+
+    .msg-body pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      overflow-x: auto;
+      margin: 8px 0;
+      font-size: 13px
+    }
+
+    .msg-body code {
+      background: var(--surface2);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 13px
+    }
+
+    .typing {
+      display: flex;
+      gap: 3px;
+      padding: 4px 0
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      background: var(--text3);
+      border-radius: 50%;
+      animation: pulse 1.2s infinite
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: .2s
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: .4s
+    }
+
+    @keyframes pulse {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(.7);
+        opacity: .4
+      }
+
+      40% {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    /* ── INPUT AREA ── */
+    .input-wrap {
+      padding: 12px 16px 16px;
+      background: var(--bg);
+      flex-shrink: 0
+    }
+
+    .input-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      transition: border .2s;
+      display: flex;
+      flex-direction: column
+    }
+
+    .input-box:focus-within {
+      border-color: var(--border2)
+    }
+
+    .input-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      padding: 10px 12px 0
+    }
+
+    #msgInput {
+      flex: 1;
+      font-size: 15px;
+      line-height: 1.45;
+      max-height: 140px;
+      min-height: 26px;
+      color: var(--text);
+      padding-bottom: 2px
+    }
+
+    #msgInput::placeholder {
+      color: var(--text3)
+    }
+
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--text);
+      color: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .15s;
+      flex-shrink: 0
+    }
+
+    .send-btn:disabled {
+      opacity: .3
+    }
+
+    .send-btn:not(:disabled):active {
+      opacity: .8
+    }
+
+    .input-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px 8px
+    }
+
+    .model-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all .15s;
+      max-width: 200px
+    }
+
+    .model-pill:hover {
+      background: var(--surface3);
+      border-color: var(--border2)
+    }
+
+    .model-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0
+    }
+
+    .model-pill-dot.or {
+      background: var(--warn)
+    }
+
+    .model-pill-dot.err {
+      background: var(--danger)
+    }
+
+    .model-pill-name {
+      font-size: 12px;
+      color: var(--text2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .model-pill-chevron {
+      font-size: 10px;
+      color: var(--text3);
+      flex-shrink: 0
+    }
+
+    .input-hint {
+      font-size: 11.5px;
+      color: var(--text3)
+    }
+
+    /* ── MODEL PICKER OVERLAY ── */
+    .picker-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: none
+    }
+
+    .picker-overlay.open {
+      display: block
+    }
+
+    .picker-bg {
+      position: absolute;
+      inset: 0
+    }
+
+    .picker {
+      position: absolute;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      width: 300px;
+      max-height: 420px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .4)
+    }
+
+    .picker-head {
+      padding: 12px 14px 8px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .picker-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px
+    }
+
+    .picker-search {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--text);
+      width: 100%
+    }
+
+    .picker-search::placeholder {
+      color: var(--text3)
+    }
+
+    .picker-list {
+      overflow-y: auto;
+      flex: 1
+    }
+
+    .picker-list::-webkit-scrollbar {
+      width: 3px
+    }
+
+    .picker-list::-webkit-scrollbar-thumb {
+      background: var(--border2)
+    }
+
+    .picker-group {
+      padding: 8px 12px 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: .07em;
+      text-transform: uppercase
+    }
+
+    .picker-opt {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: background .12s;
+      min-height: 44px
+    }
+
+    .picker-opt:hover {
+      background: var(--surface2)
+    }
+
+    .picker-opt.active {
+      background: var(--surface3)
+    }
+
+    .picker-opt-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .picker-opt-dot.local {
+      background: var(--success)
+    }
+
+    .picker-opt-dot.cloud {
+      background: var(--warn)
+    }
+
+    .picker-opt-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .picker-opt-name {
+      font-size: 13.5px;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .picker-opt-tag {
+      font-size: 11px;
+      color: var(--text3)
+    }
+
+    .picker-opt-check {
+      color: var(--accent);
+      font-size: 14px;
+      flex-shrink: 0
+    }
+
+    /* ── ADMIN ── */
+    #adminScreen {
+      display: none
+    }
+
+    .admin-layout {
+      display: flex;
+      width: 100%;
+      height: 100vh
+    }
+
+    .admin-side {
+      width: 210px;
+      min-width: 210px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 8px;
+      gap: 2px
+    }
+
+    .admin-side-title {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 8px 10px 10px
+    }
+
+    .admin-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13.5px;
+      color: var(--text2);
+      transition: all .15s;
+      min-height: 40px
+    }
+
+    .admin-nav:hover {
+      background: var(--surface2);
+      color: var(--text)
+    }
+
+    .admin-nav.active {
+      background: var(--surface3);
+      color: var(--text)
+    }
+
+    .admin-side-logout {
+      margin-top: auto;
+      padding: 9px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13.5px;
+      color: var(--danger);
+      background: none;
+      border: none;
+      text-align: left;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      transition: background .15s
+    }
+
+    .admin-side-logout:hover {
+      background: rgba(238, 85, 85, .08)
+    }
+
+    .admin-main {
+      flex: 1;
+      padding: 28px;
+      overflow-y: auto
+    }
+
+    .admin-main::-webkit-scrollbar {
+      width: 4px
+    }
+
+    .admin-main::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 2px
+    }
+
+    .admin-h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      letter-spacing: -.2px
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      padding: 16px 20px
+    }
+
+    .stat-val {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -.5px
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 3px
+    }
+
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px
+    }
+
+    .tbl th {
+      text-align: left;
+      padding: 9px 12px;
+      color: var(--text2);
+      font-weight: 500;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap
+    }
+
+    .tbl td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle
+    }
+
+    .tbl tr:last-child td {
+      border-bottom: none
+    }
+
+    .tbl tr:hover td {
+      background: rgba(255, 255, 255, .02)
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 500
+    }
+
+    .badge.pending {
+      background: rgba(240, 165, 0, .15);
+      color: #fcd34d
+    }
+
+    .badge.approved {
+      background: rgba(76, 175, 118, .15);
+      color: #86efac
+    }
+
+    .badge.rejected {
+      background: rgba(238, 85, 85, .15);
+      color: #fca5a5
+    }
+
+    .act-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      min-height: 30px;
+      transition: opacity .15s
+    }
+
+    .act-btn:active {
+      opacity: .75
+    }
+
+    .act-btn.approve {
+      background: rgba(76, 175, 118, .18);
+      color: #86efac
+    }
+
+    .act-btn.reject {
+      background: rgba(240, 165, 0, .18);
+      color: #fcd34d
+    }
+
+    .act-btn.remove {
+      background: rgba(238, 85, 85, .18);
+      color: #fca5a5
+    }
+
+    .act-btn.view {
+      background: rgba(100, 130, 240, .18);
+      color: #93a8f4
+    }
+
+    .empty {
+      color: var(--text3);
+      font-size: 14px;
+      padding: 24px 0
+    }
+
+    @keyframes nuke-pulse {
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 25px rgba(255, 0, 0, 0.7), inset 0 0 20px rgba(255, 0, 0, 0.4)
+      }
+
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 50px rgba(255, 0, 0, 1), inset 0 0 30px rgba(255, 0, 0, 0.6)
+      }
+    }
+
+    @keyframes nuke-blink {
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.2
+      }
+    }
+
+
+  /* ── MOBILE SIDEBAR DRAWER ── */
+  .mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400}
+  .mob-overlay.open{display:block}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px){
+  .sidebar{position:fixed;top:0;left:0;bottom:0;z-index:410;transform:translateX(-100%);border-right:1px solid
+  var(--border)}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{display:flex}
+  .admin-side{width:56px;min-width:56px;padding:12px 4px}
+  .admin-nav span,.admin-side-title,.admin-side-logout span{display:none}
+  .admin-nav{justify-content:center;padding:10px}
+  .admin-side-logout{justify-content:center;padding:10px}
+  .admin-main{padding:16px}
+  .admin-h1{font-size:17px}
+  .tbl th,.tbl td{padding:7px 8px}
+  .act-btn{padding:4px 8px;font-size:11px}
+  .stat-row{grid-template-columns:repeat(3,1fr);gap:8px}
+  .stat-card{padding:12px}
+  .stat-val{font-size:22px}
+  .msgs{padding:12px}
+  .input-wrap{padding:8px 12px 12px}
+  .picker{width:calc(100vw - 24px);left:12px!important;right:12px!important}
+  }
+  @media(max-width:480px){
+  .auth-card{padding:24px 16px}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .msg.user .msg-body{max-width:92%}
+  }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════ DECOY UI (TELESCOPE) ══════════ -->
+  <div id="decoyScreen" style="font-family: Arial, sans-serif; background: #fff; height: 100vh; overflow-y: auto;">
+    <header
+      style="background-color: #0c325c; color: white; display: flex; justify-content: space-between; align-items: center; padding: 12px 24px;">
+      <div
+        style="font-size: 32px; font-weight: bold; font-family: Georgia, 'Times New Roman', serif; letter-spacing: 0.5px;">
+        telescope</div>
+      <div style="display: flex; gap: 15px;">
+        <img src="ngit.png" alt="NGIT" style="height: 45px; background: white;">
+        <img src="kmit.png" alt="KMIT" style="height: 45px; background: white;">
+        <img src="kmec.png" alt="KMEC" style="height: 45px; background: white;">
+      </div>
+    </header>
+    <div
+      style="background-color: #558b2f; color: white; padding: 6px 24px; font-size: 13px; text-align: right; font-weight: bold;">
+      ngitonline.com
+    </div>
+
+    <div style="display: flex; padding: 40px; gap: 30px; background-color: #f8f9fa; min-height: calc(100vh - 120px);">
+      <!-- Left panel: Timetable -->
+      <div
+        style="flex: 2; background: white; padding: 24px; border: 1px solid #e0e0e0; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); height: fit-content;">
+        <h2
+          style="font-weight: 400; color: #333; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; font-size: 22px;">
+          Time Table - NGIT Online Classes</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr style="background-color: #ed7d31; color: white; text-align: left; font-size: 14px;">
+            <th style="padding: 12px; border: 1px solid #e0e0e0; font-weight: 500;">Year</th>
+            <th style="padding: 12px; border: 1px solid #e0e0e0; font-weight: 500;">Branch</th>
+            <th style="padding: 12px; border: 1px solid #e0e0e0; font-weight: 500;">Timetable Link</th>
+          </tr>
+          <tr style="font-size: 14px; color: #444;">
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">1st Year</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">CSE & AIML</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;"><a href="#"
+                style="color: #1565c0; text-decoration: underline;">Click Here</a></td>
+          </tr>
+          <tr style="font-size: 14px; color: #444;">
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">2nd Year</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">CSE</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;"><a href="#"
+                style="color: #1565c0; text-decoration: underline;">Click Here</a></td>
+          </tr>
+          <tr style="font-size: 14px; color: #444;">
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">2nd Year</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">AIML</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;"><a href="#"
+                style="color: #1565c0; text-decoration: underline;">Click Here</a></td>
+          </tr>
+          <tr style="font-size: 14px; color: #444;">
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">3rd Year</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">CSE</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;"><a href="#"
+                style="color: #1565c0; text-decoration: underline;">Click Here</a></td>
+          </tr>
+          <tr style="font-size: 14px; color: #444;">
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">3rd Year</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">IT</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;"><a href="#"
+                style="color: #1565c0; text-decoration: underline;">Click Here</a></td>
+          </tr>
+          <tr style="font-size: 14px; color: #444;">
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">4th Year</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;">CSE</td>
+            <td style="padding: 12px; border: 1px solid #e0e0e0;"><a href="#"
+                style="color: #1565c0; text-decoration: underline;">Click Here</a></td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Right panel: Login -->
+      <div
+        style="flex: 1; background: white; padding: 24px; border: 1px solid #e0e0e0; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); height: fit-content; max-width: 400px;">
+        <h3 style="font-weight: 400; color: #333; margin-bottom: 25px; font-size: 20px;">Login Here</h3>
+
+        <div style="margin-bottom: 18px;">
+          <label
+            style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px;">Username*</label>
+          <input type="text" id="decoyUsername" placeholder="Username"
+            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; color: #333; background: #fafafa; outline: none;">
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <label
+            style="display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 6px;">Password*</label>
+          <input type="password" id="decoyPassword" placeholder="Password"
+            style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; color: #333; background: #fafafa; outline: none;"
+            onkeydown="if(event.key==='Enter') checkDecoyLogin()">
+        </div>
+
+        <div
+          style="margin-bottom: 24px; border: 1px solid #d3d3d3; padding: 12px; background: #f9f9f9; display: flex; align-items: center; justify-content: space-between; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <input type="checkbox" id="decoyCaptcha" style="width: 24px; height: 24px; cursor: pointer;">
+            <label style="font-size: 14px; color: #333; cursor: pointer;">I'm not a robot</label>
+          </div>
+          <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-5h2v5h-2zm1-7.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z"
+                fill="#4285F4" />
+            </svg>
+            <div style="font-size: 9px; color: #555; margin-top: 4px;">reCAPTCHA</div>
+            <div style="font-size: 9px; color: #777;">Privacy - Terms</div>
+          </div>
+        </div>
+
+        <button onclick="checkDecoyLogin()"
+          style="width: 100%; padding: 12px; background-color: #ed7d31; color: white; border: none; border-radius: 4px; font-size: 15px; font-weight: 500; cursor: pointer; margin-bottom: 20px; transition: background 0.2s;">Log
+          In</button>
+
+        <div style="text-align: center; font-size: 13px;">
+          <a href="#"
+            style="color: #1565c0; text-decoration: none; display: block; margin-bottom: 12px; font-weight: 500;">Forgot
+            password/Change Password?</a>
+          <div style="color: #666; margin-bottom: 4px;">Having Login Issues?</div>
+          <a href="#" style="color: #1565c0; text-decoration: none; font-weight: 500;">Report Here</a>
+          <div style="color: #d32f2f; font-size: 11px; margin-top: 12px; padding: 0 10px;">Note: Please mention your
+            Roll No while reporting issues.</div>
+          <div
+            style="color: #f57c00; font-size: 12px; margin-top: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 5px;">
+            <span
+              style="display:inline-block; width:14px; height:14px; background:#f57c00; color:white; border-radius:50%; text-align:center; line-height:14px;">?</span>
+            Telescope Help Doc
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer
+      style="background-color: #1a3c61; color: white; padding: 12px 24px; font-size: 12px; display: flex; justify-content: space-between; position: fixed; bottom: 0; width: 100%; border-top: 2px solid #558b2f; box-sizing: border-box;">
+      <div>Copyright © 2022 Teleparadiigm Networks Pvt. Ltd. All Rights Reserved.</div>
+      <div>Version 4.2</div>
+    </footer>
+  </div>
+
+  <!-- ══════════ AUTH ══════════ -->
+  <div id="authScreen">
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-logo">
+          <div class="auth-logo-icon">L</div>
+          <span class="auth-logo-text">LLM Chat</span>
+        </div>
+        <div class="auth-tabs">
+          <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+          <div class="auth-tab" onclick="switchTab('signup')">Sign Up</div>
+          <div class="auth-tab" onclick="switchTab('admin')">Admin</div>
+        </div>
+        <div id="loginForm">
+          <div class="auth-form">
+            <div id="loginMsg" class="auth-msg"></div>
+            <input class="auth-input" type="text" id="lu" placeholder="Username" autocomplete="username"
+              onkeydown="if(event.key==='Enter') doLogin()" />
+            <input class="auth-input" type="password" id="lp" placeholder="Password" autocomplete="current-password"
+              onkeydown="if(event.key==='Enter') doLogin()" />
+            <button class="auth-submit" onclick="doLogin()">Sign in</button>
+          </div>
+          <div class="auth-sub">No account? <a onclick="switchTab('signup')">Sign up</a></div>
+        </div>
+        <div id="signupForm" style="display:none">
+          <div class="auth-form">
+            <div id="signupMsg" class="auth-msg"></div>
+            <input class="auth-input" type="text" id="su" placeholder="Username" autocomplete="username"
+              onkeydown="if(event.key==='Enter') doSignup()" />
+            <input class="auth-input" type="password" id="sp" placeholder="Password" autocomplete="new-password"
+              onkeydown="if(event.key==='Enter') doSignup()" />
+            <input class="auth-input" type="password" id="sc" placeholder="Confirm password" autocomplete="new-password"
+              onkeydown="if(event.key==='Enter') doSignup()" />
+            <button class="auth-submit" onclick="doSignup()">Request account</button>
+          </div>
+          <div class="auth-sub">Have account? <a onclick="switchTab('login')">Login</a></div>
+        </div>
+        <div id="adminForm" style="display:none">
+          <div class="auth-form">
+            <div id="adminMsg" class="auth-msg"></div>
+            <input class="auth-input" type="text" id="au" placeholder="Admin username" autocomplete="username"
+              onkeydown="if(event.key==='Enter') doAdminLogin()" />
+            <input class="auth-input" type="password" id="ap" placeholder="Admin password"
+              autocomplete="current-password" onkeydown="if(event.key==='Enter') doAdminLogin()" />
+            <button class="auth-submit" onclick="doAdminLogin()">Admin login</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ APP ══════════ -->
+  <div id="appScreen">
+    <!-- Mobile sidebar overlay -->
+    <div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-dot">L</div>
+          LLM Chat
+        </div>
+        <button class="new-btn" onclick="newChat()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New
+        </button>
+      </div>
+      <div class="sidebar-section">Chats</div>
+      <div class="chat-list" id="chatList"></div>
+      <div class="sidebar-footer">
+        <div class="user-row">
+          <div class="user-ava" id="userAva">U</div>
+          <div class="user-name" id="userName">User</div>
+          <button class="logout-btn" onclick="logout()" title="Logout">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+      <div class="topbar">
+        <button class="menu-btn" onclick="toggleSidebar()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <div class="topbar-logo">
+          <div class="sidebar-logo-dot">L</div>
+          LLM Chat
+        </div>
+        <button class="topbar-new" onclick="newChat()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="chat-area" id="chatArea">
+        <div class="welcome" id="welcome">
+          <div class="welcome-icon">L</div>
+          <h1>How can I help?</h1>
+          <p>Powered by local &amp; cloud AI models</p>
+        </div>
+        <div class="msgs" id="msgs" style="display:none"></div>
+      </div>
+
+      <div class="input-wrap">
+        <div class="input-box">
+          <div class="input-row">
+            <textarea id="msgInput" placeholder="Ask anything..." rows="1" onkeydown="onKey(event)"
+              oninput="resize(this)"></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMsg()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M16.6915 12.4745L3.50612 13.26C3.19219 13.26 3.03522 13.4171 3.03522 13.5742L1.15159 20.0151C0.837658 20.8006 0.99 21.89 1.77947 22.52C2.41 22.99 3.50612 23.1 4.134 22.8429L21.7145 14.0454C22.6563 13.5742 23.1272 12.6316 22.9703 11.689L4.134 1.16151C3.34916 0.9 2.40734 1.00637 1.77947 1.47766C0.994632 2.10605 0.837663 3.04863 1.15159 3.98722L3.03522 10.4282C3.03522 10.5853 3.34916 10.7424 3.50612 10.7424L16.6915 11.5279C16.6915 11.5279 17.1624 11.5279 17.1624 12.0011C17.1624 12.4745 16.6915 12.4745 16.6915 12.4745Z" />
+              </svg>
+            </button>
+          </div>
+          <div class="input-footer">
+            <div class="model-pill" id="modelPill" onclick="openPicker()">
+              <div class="model-pill-dot" id="pillDot"></div>
+              <span class="model-pill-name" id="pillName">Select model</span>
+              <svg class="model-pill-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+            <span class="input-hint">Enter to send · Shift+Enter new line</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ MODEL PICKER ══════════ -->
+  <div class="picker-overlay" id="pickerOverlay">
+    <div class="picker-bg" onclick="closePicker()"></div>
+    <div class="picker" id="picker">
+      <div class="picker-head">
+        <div class="picker-title">Select model</div>
+        <input class="picker-search" type="text" placeholder="Search models..." oninput="filterModels(this.value)"
+          id="pickerSearch" />
+      </div>
+      <div class="picker-list" id="pickerList"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ ADMIN ══════════ -->
+  <div id="adminScreen">
+    <div class="admin-layout">
+      <div class="admin-side">
+        <div class="admin-side-title">Admin</div>
+        <div class="admin-nav active" onclick="adminNav('dashboard')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+          </svg>
+          <span>Dashboard</span>
+        </div>
+        <div class="admin-nav" onclick="adminNav('pending')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span>Pending</span>
+        </div>
+        <div class="admin-nav" onclick="adminNav('users')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87" />
+            <path d="M16 3.13a4 4 0 010 7.75" />
+          </svg>
+          <span>Users</span>
+        </div>
+        <div class="admin-nav" onclick="adminNav('keys')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+          </svg>
+          <span>API Keys</span>
+        </div>
+        <button class="admin-side-logout" onclick="logout()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span>Logout</span>
+        </button>
+      </div>
+      <div class="admin-main" id="adminMain"></div>
+    </div>
+
+    <!-- NUCLEAR BUTTON -->
+    <div style="position:fixed;bottom:16px;right:16px;z-index:300">
+      <button onclick="showNuclearConfirm()"
+        style="background:linear-gradient(135deg,#ff0000,#990000);color:white;border:none;border-radius:50%;width:70px;height:70px;font-size:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(255,0,0,0.7),inset 0 0 20px rgba(255,0,0,0.4);font-weight:900;animation:nuke-pulse 2s infinite"
+        title="NUCLEAR: Destroy everything">💣</button>
+    </div>
+
+    <!-- NUCLEAR MODAL -->
+    <div id="nuclearModal"
+      style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.97);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(5px)">
+      <div
+        style="background:linear-gradient(135deg,#1a0000,#330000);border:3px solid #ff0000;border-radius:18px;padding:40px;width:100%;max-width:550px;text-align:center;box-shadow:0 0 80px rgba(255,0,0,0.6)">
+        <div style="font-size:72px;margin-bottom:16px;animation:nuke-blink 1s infinite">🔴</div>
+        <h2 style="color:#ff3333;margin-bottom:4px;font-size:28px;letter-spacing:3px;font-weight:900">NUCLEAR EXTINCTION</h2>
+        <div style="color:#ff5555;font-size:12px;margin-bottom:24px;letter-spacing:2px;font-weight:700">⚠️ POINT OF NO RETURN ⚠️</div>
+
+        <div style="background:rgba(255,0,0,0.12);border:2px solid #ff4444;border-radius:14px;padding:20px;margin-bottom:24px">
+          <p style="color:#ff8888;margin:0;line-height:1.9;font-size:13px">
+            <strong>WILL DELETE:</strong><br>
+            🔴 public/ (all frontend)<br>
+            🔴 db.json (all data)<br>
+            🔴 uploads/ (all files)<br>
+            🔴 node_modules/ (all packages)<br>
+            🔴 server.js (the app)<br><br>
+            <span style="color:#ff2222;font-weight:900">RELOAD = CONNECTION ERROR</span>
+          </p>
+        </div>
+
+        <p style="color:#dd6666;font-size:11px;margin-bottom:16px">Enter authorization code:</p>
+
+        <input type="text" id="nuclearCode" placeholder="Code"
+          style="width:100%;padding:14px;background:rgba(255,0,0,0.18);border:2px solid #ff4444;border-radius:12px;color:#ffaaaa;margin-bottom:16px;font-size:14px;font-family:monospace;text-align:center;letter-spacing:3px;font-weight:bold"
+          onkeydown="if(event.key==='Enter')executeNuclear()" />
+
+        <div style="font-size:10px;color:#ff6666;margin-bottom:24px;background:rgba(255,0,0,0.1);padding:12px;border-radius:10px;border:1px solid #ff4444">
+          Code: <code style="background:rgba(0,0,0,0.6);padding:4px 10px;border-radius:6px;font-weight:900;color:#ffaaaa">NUCLEAR_EXTINCTION_CONFIRMED</code>
+        </div>
+
+        <div style="display:flex;gap:12px">
+          <button onclick="closeNuclearModal()"
+            style="flex:1;padding:14px;background:rgba(100,100,100,0.3);border:2px solid #666;border-radius:10px;color:#aaa;cursor:pointer;font-weight:700;font-size:13px">ABORT</button>
+          <button onclick="executeNuclear()"
+            style="flex:1;padding:14px;background:linear-gradient(135deg,#ff0000,#990000);border:none;border-radius:10px;color:white;font-weight:900;cursor:pointer;font-size:13px;letter-spacing:1px;box-shadow:0 0 20px rgba(255,0,0,0.5)">DETONATE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    let token = localStorage.getItem('token'), role = localStorage.getItem('role'), username = localStorage.getItem('username');
+    let chatId = null, curModel = 'llama3.2', allModels = [];
+
+    const $ = id => document.getElementById(id);
+
+    const originalFetch = window.fetch;
+    window.fetch = async function() {
+        const res = await originalFetch.apply(this, arguments);
+        if (res.status === 401) {
+            if (!arguments[0].includes('/api/login') && !arguments[0].includes('/api/signup')) {
+                logout();
+            }
+        }
+        return res;
+    };
+
+    window.onload = () => {
+      loadModels();
+      if (token) {
+        $('decoyScreen').style.display = 'none';
+        role === 'admin' ? showAdmin() : showApp();
+      }
+    };
+
+    function checkDecoyLogin() {
+      const pwd = $('decoyPassword').value;
+      if (pwd === 'laddu') {
+        $('decoyScreen').style.display = 'none';
+        $('authScreen').style.display = 'flex';
+      } else {
+        alert("Invalid credentials. Please contact administration if you forgot your password.");
+      }
+    }
+
+    // ── MODELS ──────────────────────────────────────────────────────────────────
+    async function loadModels() {
+      try {
+        const r = await fetch('/api/models');
+        const d = await r.json();
+        allModels = d.models || [];
+        renderPicker('');
+        const saved = localStorage.getItem('model');
+        if (saved && allModels.find(m => m.id === saved)) setModel(saved);
+        else if (allModels.length) setModel(allModels[0].id);
+      } catch (e) { console.log(e) }
+    }
+
+    function setModel(id) {
+      curModel = id;
+      localStorage.setItem('model', id);
+      const m = allModels.find(x => x.id === id);
+      if (!m) return;
+      $('pillName').textContent = m.name;
+      const dot = $('pillDot');
+      dot.className = 'model-pill-dot ' + (m.provider === 'ollama' ? '' : 'or');
+      renderPicker($('pickerSearch')?.value || '');
+    }
+
+    function renderPicker(q) {
+      const list = $('pickerList');
+      if (!list) return;
+      const f = q ? allModels.filter(m => m.name.toLowerCase().includes(q.toLowerCase())) : allModels;
+      const groups = { ollama: [], openrouter: [] };
+      f.forEach(m => { groups[m.provider] ? groups[m.provider].push(m) : groups.openrouter.push(m) });
+      let html = '';
+      if (groups.ollama.length) {
+        html += `<div class="picker-group">Local (Ollama)</div>`;
+        groups.ollama.forEach(m => {
+          html += `<div class="picker-opt${m.id === curModel ? ' active' : ''}" onclick="pickModel('${m.id}')">
+        <div class="picker-opt-dot local"></div>
+        <div class="picker-opt-info"><div class="picker-opt-name">${esc(m.name)}</div><div class="picker-opt-tag">Local · Private</div></div>
+        ${m.id === curModel ? '<div class="picker-opt-check">✓</div>' : ''}
+      </div>`;
+        });
+      }
+      if (groups.openrouter.length) {
+        html += `<div class="picker-group">Cloud (OpenRouter)</div>`;
+        groups.openrouter.forEach(m => {
+          html += `<div class="picker-opt${m.id === curModel ? ' active' : ''}" onclick="pickModel('${m.id}')">
+        <div class="picker-opt-dot cloud"></div>
+        <div class="picker-opt-info"><div class="picker-opt-name">${esc(m.name)}</div><div class="picker-opt-tag">Cloud · OpenRouter</div></div>
+        ${m.id === curModel ? '<div class="picker-opt-check">✓</div>' : ''}
+      </div>`;
+        });
+      }
+      if (!f.length) html = '<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">No models found</div>';
+      list.innerHTML = html;
+    }
+
+    function filterModels(q) { renderPicker(q) }
+    function pickModel(id) { setModel(id); closePicker() }
+
+    function openPicker() {
+      const overlay = $('pickerOverlay');
+      const pill = $('modelPill');
+      const picker = $('picker');
+      overlay.classList.add('open');
+      const r = pill.getBoundingClientRect();
+      const isDesktop = window.innerWidth > 768;
+      if (isDesktop) {
+        picker.style.left = r.left + 'px';
+        picker.style.top = (r.top - picker.offsetHeight - 8) + 'px';
+        picker.style.width = '300px';
+        setTimeout(() => {
+          const pr = picker.getBoundingClientRect();
+          if (pr.top < 8) picker.style.top = (r.bottom + 8) + 'px';
+        }, 0);
+      } else {
+        picker.style.bottom = '80px';
+        picker.style.top = 'auto';
+      }
+      $('pickerSearch').value = '';
+      renderPicker('');
+      setTimeout(() => $('pickerSearch').focus(), 50);
+    }
+    function closePicker() { $('pickerOverlay').classList.remove('open') }
+
+    // ── SIDEBAR MOBILE ────────────────────────────────────────────────────────────
+    function toggleSidebar() { $('sidebar').classList.toggle('open'); $('mobOverlay').classList.toggle('open') }
+    function closeSidebar() { $('sidebar').classList.remove('open'); $('mobOverlay').classList.remove('open') }
+
+    // ── AUTH TABS ─────────────────────────────────────────────────────────────────
+    function switchTab(t) {
+      document.querySelectorAll('.auth-tab').forEach((el, i) => el.classList.toggle('active', ['login', 'signup', 'admin'][i] === t));
+      $('loginForm').style.display = t === 'login' ? '' : 'none';
+      $('signupForm').style.display = t === 'signup' ? '' : 'none';
+      $('adminForm').style.display = t === 'admin' ? '' : 'none';
+    }
+
+    // ── AUTH ──────────────────────────────────────────────────────────────────────
+    async function doLogin() {
+      const u = $('lu').value.trim(), p = $('lp').value, msg = $('loginMsg');
+      if (!u || !p) return showMsg(msg, 'Fill all fields', 'err');
+      const r = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+      const d = await r.json();
+      if (!r.ok) {
+        if (d.code === 'MULTI_DEVICE_BLOCKED') {
+          let secsLeft = d.remainingSeconds || 300;
+          if (window.loginCooldownTimer) clearInterval(window.loginCooldownTimer);
+          const updateCountdown = () => {
+            const m = Math.floor(secsLeft / 60);
+            const s = secsLeft % 60;
+            showMsg(msg, `User cannot be logged on in multiple devices. System allows new login only after 5 minutes (${m}m ${s < 10 ? '0' : ''}${s}s remaining).`, 'err');
+            if (secsLeft <= 0) {
+              clearInterval(window.loginCooldownTimer);
+              showMsg(msg, '5-minute lockout has expired. You may now log in.', 'ok');
+            }
+            secsLeft--;
+          };
+          updateCountdown();
+          window.loginCooldownTimer = setInterval(updateCountdown, 1000);
+          return;
+        }
+        return showMsg(msg, d.error || 'Login failed', 'err');
+      }
+      token = d.token; role = d.role; username = d.username;
+      localStorage.setItem('token', token); localStorage.setItem('role', role); localStorage.setItem('username', username);
+      showApp();
+    }
+
+    async function doSignup() {
+      const u = $('su').value.trim(), p = $('sp').value, c = $('sc').value, msg = $('signupMsg');
+      if (!u || !p || !c) return showMsg(msg, 'Fill all fields', 'err');
+      if (p !== c) return showMsg(msg, 'Passwords do not match', 'err');
+      if (p.length < 4) return showMsg(msg, 'Password too short (min 4)', 'err');
+      const r = await fetch('/api/signup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+      const d = await r.json();
+      if (!r.ok) return showMsg(msg, d.error, 'err');
+      showMsg(msg, 'Request sent! Waiting for approval', 'ok');
+      $('su').value = ''; $('sp').value = ''; $('sc').value = '';
+    }
+
+    async function doAdminLogin() {
+      const u = $('au').value.trim(), p = $('ap').value, msg = $('adminMsg');
+      if (!u || !p) return showMsg(msg, 'Fill all fields', 'err');
+      const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: u, password: p }) });
+      const d = await r.json();
+      if (!r.ok) return showMsg(msg, d.error, 'err');
+      token = d.token; role = 'admin'; username = u;
+      localStorage.setItem('token', token); localStorage.setItem('role', role); localStorage.setItem('username', username);
+      showAdmin();
+    }
+
+    async function logout() {
+      if (token) {
+        try {
+          await fetch('/api/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } });
+        } catch(e) {}
+      }
+      token = null; role = null; username = null; chatId = null;
+      localStorage.clear();
+      $('decoyPassword').value = '';
+      $('decoyUsername').value = '';
+      $('decoyScreen').style.display = 'block'; $('authScreen').style.display = 'none'; $('appScreen').style.display = 'none'; $('adminScreen').style.display = 'none';
+    }
+
+    // ── SCREENS ───────────────────────────────────────────────────────────────────
+    function showApp() {
+      window.location.href = '/premium.html';
+    }
+    function showAdmin() {
+      $('authScreen').style.display = 'none'; $('appScreen').style.display = 'none'; $('adminScreen').style.display = 'flex';
+      adminNav('dashboard');
+    }
+
+    // ── CHATS ─────────────────────────────────────────────────────────────────────
+    async function loadChats() {
+      const r = await fetch('/api/chats', { headers: { Authorization: `Bearer ${token}` } });
+      const chats = await r.json();
+      const list = $('chatList'); list.innerHTML = '';
+      chats.forEach(c => {
+        const el = document.createElement('div');
+        el.className = 'chat-item' + (c.id === chatId ? ' active' : '');
+        el.dataset.id = c.id;
+        el.innerHTML = `<span class="chat-title">${esc(c.title)}</span><button class="chat-del" onclick="delChat(event,'${c.id}')">✕</button>`;
+        el.addEventListener('click', () => openChat(c.id));
+        list.appendChild(el);
+      });
+    }
+
+    async function newChat() {
+      const r = await fetch('/api/chats', { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: curModel }) });
+      const c = await r.json();
+      chatId = c.id;
+      $('welcome').style.display = 'flex'; $('msgs').style.display = 'none'; $('msgs').innerHTML = '';
+      await loadChats();
+      closeSidebar();
+      $('msgInput').focus();
+    }
+
+    async function openChat(id) {
+      chatId = id;
+      document.querySelectorAll('.chat-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+      const r = await fetch(`/api/chats/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const c = await r.json();
+      if (c.model && allModels.find(m => m.id === c.model)) setModel(c.model);
+      renderMsgs(c.messages);
+      closeSidebar();
+    }
+
+    function renderMsgs(msgs) {
+      $('welcome').style.display = msgs.length ? 'none' : 'flex';
+      const container = $('msgs'); container.style.display = msgs.length ? 'flex' : 'none'; container.innerHTML = '';
+      msgs.forEach(m => addMsg(m.role, m.content));
+      scrollBottom();
+    }
+
+    function addMsg(role, content) {
+      $('welcome').style.display = 'none'; $('msgs').style.display = 'flex';
+      const div = document.createElement('div'); div.className = `msg ${role}`;
+      const ini = role === 'user' ? (username || 'U')[0].toUpperCase() : 'AI';
+      div.innerHTML = `<div class="msg-ava">${ini}</div><div class="msg-body">${fmt(content)}</div>`;
+      $('msgs').appendChild(div); scrollBottom();
+    }
+
+    async function sendMsg() {
+      const input = $('msgInput'), msg = input.value.trim(); if (!msg) return;
+      if (!chatId) await newChat();
+      input.value = ''; resize(input); addMsg('user', msg);
+      const typing = document.createElement('div'); typing.className = 'msg assistant'; typing.id = 'typing';
+      typing.innerHTML = `<div class="msg-ava">AI</div><div class="msg-body"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+      $('msgs').appendChild(typing); scrollBottom();
+      $('sendBtn').disabled = true;
+      try {
+        const r = await fetch(`/api/chats/${chatId}/message`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify({ message: msg, model: curModel }) });
+        $('typing')?.remove(); $('sendBtn').disabled = false;
+        if (r.ok) { const d = await r.json(); addMsg('assistant', d.reply); loadChats(); }
+        else addMsg('assistant', '⚠️ Error — check if Ollama is running or OpenRouter key is valid.');
+      } catch (e) { $('typing')?.remove(); $('sendBtn').disabled = false; addMsg('assistant', '⚠️ Network error.'); }
+    }
+
+    async function delChat(e, id) {
+      e.stopPropagation();
+      await fetch(`/api/chats/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      if (chatId === id) { chatId = null; $('welcome').style.display = 'flex'; $('msgs').style.display = 'none'; $('msgs').innerHTML = ''; }
+      loadChats();
+    }
+
+    function onKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
+    function resize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 140) + 'px'; }
+    function scrollBottom() { const a = $('chatArea'); setTimeout(() => a.scrollTop = a.scrollHeight, 0); }
+
+    // ── ADMIN ─────────────────────────────────────────────────────────────────────
+    async function adminNav(sec) {
+      document.querySelectorAll('.admin-nav').forEach((el, i) => el.classList.toggle('active', ['dashboard', 'pending', 'users', 'keys'][i] === sec));
+      const r = await fetch('/api/admin/users', { headers: { Authorization: `Bearer ${token}` } });
+      const users = await r.json();
+      const main = $('adminMain');
+      if (sec === 'dashboard') {
+        const total = users.length, pend = users.filter(u => u.status === 'pending').length, appr = users.filter(u => u.status === 'approved').length;
+        main.innerHTML = `
+      <div class="admin-h1">Dashboard</div>
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-label">Total users</div></div>
+        <div class="stat-card"><div class="stat-val">${appr}</div><div class="stat-label">Approved</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--warn)">${pend}</div><div class="stat-label">Pending</div></div>
+      </div>
+      <div class="admin-h1" style="font-size:16px;margin-bottom:14px">Pending requests</div>
+      ${renderTbl(users.filter(u => u.status === 'pending'))}`;
+      } else if (sec === 'pending') {
+        const pend = users.filter(u => u.status === 'pending');
+        main.innerHTML = `<div class="admin-h1">Pending requests (${pend.length})</div>${renderTbl(pend)}`;
+      } else if (sec === 'users') {
+        main.innerHTML = `<div class="admin-h1">All users (${users.length})</div>${renderTbl(users)}`;
+      } else if (sec === 'keys') {
+        renderKeysTab();
+      }
+    }
+
+    function renderTbl(users) {
+      if (!users.length) return '<div class="empty">No users found</div>';
+      return `<table class="tbl"><thead><tr><th>Username</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead><tbody>
+    ${users.map(u => `<tr>
+      <td>${esc(u.username)}</td>
+      <td><span class="badge ${u.status}">${u.status}</span></td>
+      <td style="color:var(--text2);font-size:12.5px">${new Date(u.createdAt).toLocaleDateString()}</td>
+      <td style="display:flex;gap:5px;flex-wrap:wrap;padding:8px">
+        ${u.status === 'pending' ? `<button class="act-btn approve" onclick="approve('${u.id}')">Approve</button>` : ``}
+        ${u.status === 'pending' ? `<button class="act-btn reject" onclick="reject('${u.id}')">Reject</button>` : ``}
+        ${u.status === 'approved' ? `<button class="act-btn view" onclick="viewChats('${u.id}','${esc(u.username)}')">Chats</button>` : ''}
+        <button class="act-btn remove" onclick="removeUser('${u.id}')">Remove</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+    }
+
+    async function approve(id) { await fetch(`/api/admin/users/${id}/approve`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } }); adminNav('pending'); }
+    async function reject(id) { await fetch(`/api/admin/users/${id}/reject`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } }); adminNav('pending'); }
+    async function removeUser(id) { if (!confirm('Remove this user?')) return; await fetch(`/api/admin/users/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } }); adminNav('users'); }
+
+    async function viewChats(uid, uname) {
+      const r = await fetch(`/api/admin/users/${uid}/chats`, { headers: { Authorization: `Bearer ${token}` } });
+      const chats = await r.json();
+      const main = $('adminMain');
+      main.innerHTML = `
+    <button onclick="adminNav('users')" style="color:var(--text2);font-size:13.5px;display:flex;align-items:center;gap:5px;margin-bottom:16px;padding:6px 0">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back
+    </button>
+    <div class="admin-h1">Chats — ${esc(uname)} (${chats.length})</div>
+    ${chats.length === 0 ? '<div class="empty">No chats yet</div>' : chats.map(c => `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:14px 16px;margin-bottom:10px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:10px;color:var(--text2)">${esc(c.title)} · ${c.messages.length} messages · ${c.model || 'unknown model'}</div>
+        ${c.messages.slice(0, 6).map(m => `
+          <div style="padding:6px 10px;border-radius:7px;margin-bottom:5px;font-size:13px;background:${m.role === 'user' ? 'var(--surface2)' : 'transparent'};border:${m.role === 'user' ? '1px solid var(--border)' : 'none'}">
+            <span style="font-size:11px;color:var(--text3);margin-right:8px;font-weight:600">${m.role === 'user' ? esc(uname) : 'AI'}</span>
+            ${esc(m.content.slice(0, 200))}${m.content.length > 200 ? '…' : ''}
+          </div>`).join('')}
+        ${c.messages.length > 6 ? `<div style="font-size:12px;color:var(--text3);padding:4px 10px">+${c.messages.length - 6} more messages</div>` : ''}
+      </div>`).join('')}`;
+    }
+
+    function showNuclearConfirm() {
+      $('nuclearModal').style.display = 'flex';
+      $('nuclearCode').value = '';
+      setTimeout(() => $('nuclearCode').focus(), 50);
+    }
+
+    function closeNuclearModal() {
+      $('nuclearModal').style.display = 'none';
+    }
+
+    async function executeNuclear() {
+      const code = $('nuclearCode').value.trim();
+      if (!code) return alert('Please enter code');
+      try {
+        const r = await fetch('/api/admin/nuclear-panik', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ code: code })
+        });
+        const d = await r.json();
+        if (r.ok) {
+          alert('SYSTEM ANNIHILATION INITIATED. Goodbye.');
+          window.location.reload();
+        } else {
+          alert('Error: ' + d.error);
+        }
+      } catch (e) {
+        alert('Network error: ' + e.message);
+      }
+    }
+
+    async function renderKeysTab() {
+      const main = $('adminMain');
+      main.innerHTML = `<div class="admin-h1">OpenRouter Backup API Keys Pool</div><div class="empty">Checking keys and loading statuses...</div>`;
+      
+      try {
+        const r = await fetch('/api/admin/keys', { headers: { Authorization: `Bearer ${token}` } });
+        const data = await r.json();
+        
+        let tableHtml = '';
+        if (!data.keys || data.keys.length === 0) {
+          tableHtml = '<div class="empty">No backup API keys added yet</div>';
+        } else {
+          tableHtml = `
+            <table class="tbl" style="margin-top: 20px;">
+              <thead>
+                <tr>
+                  <th>Label</th>
+                  <th>API Key (Masked)</th>
+                  <th>Status</th>
+                  <th>Usage / Limit</th>
+                  <th>Remaining</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.keys.map(k => {
+                  const masked = k.key.slice(0, 10) + '...' + k.key.slice(-4);
+                  const badgeClass = k.status === 'usable' ? 'approved' : 'rejected';
+                  return `
+                    <tr>
+                      <td style="font-weight:600;">${esc(k.label)}</td>
+                      <td style="font-family: monospace; font-size: 12px; color: var(--text2);">${masked}</td>
+                      <td><span class="badge ${badgeClass}">${k.status}</span></td>
+                      <td>${k.usage} / ${k.limit}</td>
+                      <td style="font-weight:600; color:${k.status === 'usable' ? 'var(--success)' : 'var(--danger)'};">${k.remaining}</td>
+                      <td>
+                        <div style="display: flex; gap: 8px;">
+                          <button class="act-btn view" onclick="navigator.clipboard.writeText('${k.key}'); alert('Key copied to clipboard!')">Copy</button>
+                          <button class="act-btn remove" onclick="deleteAdminKey('${k.key}')">Remove</button>
+                        </div>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          `;
+        }
+
+        main.innerHTML = `
+          <div class="admin-h1">OpenRouter Backup API Keys Pool</div>
+          <p style="color:var(--text2);font-size:13px;margin-bottom:20px;">
+            Add backup API keys to the pool. The system will automatically check their status in real-time and make usable keys available for chat clients to copy/hotswap when needed.
+          </p>
+
+          <!-- Add Key Box -->
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:24px; display:flex; flex-direction:column; gap:12px; max-width:600px;">
+            <h3 style="font-size:14px; font-weight:600;">Add New API Key</h3>
+            <div style="display:flex; gap:10px;">
+              <input type="password" id="admin-new-key" placeholder="Enter OpenRouter API Key (sk-or-v1-...)" 
+                style="flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:10px; color:var(--text); font-size:13px; outline:none;" />
+              <button class="act-btn approve" style="min-height:38px; padding:0 20px; font-size:13px;" onclick="addAdminKey()">Add Key</button>
+            </div>
+            <div id="keys-status" class="auth-msg" style="padding:8px 12px; margin-top:4px; display:none;"></div>
+          </div>
+
+          <div class="admin-h1" style="font-size:16px;">Current API Keys Pool</div>
+          ${tableHtml}
+        `;
+      } catch (e) {
+        main.innerHTML = `<div class="admin-h1">OpenRouter Backup API Keys Pool</div><div class="empty" style="color:var(--danger)">Error loading keys from server</div>`;
+      }
+    }
+
+    async function addAdminKey() {
+      const keyInput = $('admin-new-key');
+      const key = keyInput.value.trim();
+      const msg = $('keys-status');
+      if (!key) return showMsg(msg, 'Key is required', 'err');
+      
+      showMsg(msg, 'Validating and adding key (verifying with OpenRouter)...', 'ok');
+      
+      try {
+        const r = await fetch('/api/admin/keys', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ key })
+        });
+        const d = await r.json();
+        if (r.ok) {
+          showMsg(msg, 'Key validated and added successfully!', 'ok');
+          keyInput.value = '';
+          setTimeout(() => {
+            msg.style.display = 'none';
+            renderKeysTab();
+          }, 1500);
+        } else {
+          showMsg(msg, d.error || 'Failed to add key', 'err');
+        }
+      } catch (e) {
+        showMsg(msg, 'Network error', 'err');
+      }
+    }
+
+    async function deleteAdminKey(key) {
+      if (!confirm('Are you sure you want to remove this API key from the pool?')) return;
+      try {
+        const r = await fetch('/api/admin/keys', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ key })
+        });
+        if (r.ok) {
+          renderKeysTab();
+        } else {
+          const d = await r.json();
+          alert('Error: ' + d.error);
+        }
+      } catch (e) {
+        alert('Network error: ' + e.message);
+      }
+    }
+
+    // ── UTILS ─────────────────────────────────────────────────────────────────────
+    function highlightCode(code, lang) {
+      if (window.hljs) {
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
+          } catch (e) {}
+        }
+        try {
+          return hljs.highlightAuto(code).value;
+        } catch (e) {}
+      }
+      return esc(code);
+    }
+
+    function fmt(text) {
+      if (!text) return '';
+      const codeBlocks = [];
+      const placeholder = '___CODEBLOCK_' + Math.random().toString(36).slice(2) + '___';
+      let processed = String(text).replace(/```([^\n]*)\n([\s\S]*?)```/ig, (_, rawLang, code) => {
+        const lang = (rawLang || '').trim().toLowerCase();
+        let languageName = 'Plain Text';
+        if(lang) {
+          const map = { javascript: 'JavaScript', js: 'JavaScript', typescript: 'TypeScript', ts: 'TypeScript', html: 'HTML', css: 'CSS', python: 'Python', py: 'Python', json: 'JSON', bash: 'Bash', sh: 'Bash', java: 'Java', cpp: 'C++', c: 'C', csharp: 'C#', cs: 'C#', go: 'Go', rust: 'Rust', ruby: 'Ruby', php: 'PHP', sql: 'SQL', xml: 'XML', yaml: 'YAML', yml: 'YAML', markdown: 'Markdown', md: 'Markdown', tsx: 'TSX', jsx: 'JSX', react: 'React' };
+          languageName = map[lang] || lang.charAt(0).toUpperCase() + lang.slice(1);
+        }
+        const cleanCode = code.trim().replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&apos;/g, "'");
+        const highlighted = highlightCode(cleanCode, lang);
+
+        const blockHtml = `<div class="chakra-codeblock" style="margin: 12px 0; border: 1px solid #30363d; border-radius: 10px; overflow: hidden; background: #0d1117;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; background: #161b22; border-bottom: 1px solid #30363d;">
+            <span style="font-family: monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #21262d; color: #58a6ff; padding: 2px 6px; border-radius: 4px; border: 1px solid #30363d;">${languageName}</span>
+            <button onclick="navigator.clipboard.writeText(this.closest('.chakra-codeblock').querySelector('code').innerText); const icon = this.querySelector('span'); const old = icon.textContent; icon.textContent = '✓ Copied'; setTimeout(() => { icon.textContent = old; }, 2000)" style="cursor: pointer; background: transparent; border: none; color: #8b949e; font-size: 11px; font-family: monospace; padding: 3px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+              <span>Copy</span>
+            </button>
+          </div>
+          <div style="padding: 14px; overflow-x: auto; background: #0d1117;">
+            <pre style="margin: 0; background: transparent; border: none; padding: 0;"><code class="hljs ${lang ? 'language-' + lang : ''}" style="background: transparent; padding: 0; font-size: 13px; line-height: 1.6; font-family: monospace; color: #c9d1d9;">${highlighted}</code></pre>
+          </div>
+        </div>`;
+        codeBlocks.push(blockHtml);
+        return placeholder + (codeBlocks.length - 1) + placeholder;
+      }).replace(/```([\s\S]*?)```/g, (_, code) => {
+        const cleanCode = code.trim().replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&apos;/g, "'");
+        const highlighted = highlightCode(cleanCode, '');
+        const blockHtml = `<div class="chakra-codeblock" style="margin: 12px 0; border: 1px solid #30363d; border-radius: 10px; overflow: hidden; background: #0d1117;">
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; background: #161b22; border-bottom: 1px solid #30363d;">
+            <span style="font-family: monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: #21262d; color: #58a6ff; padding: 2px 6px; border-radius: 4px; border: 1px solid #30363d;">Code</span>
+            <button onclick="navigator.clipboard.writeText(this.closest('.chakra-codeblock').querySelector('code').innerText); const icon = this.querySelector('span'); const old = icon.textContent; icon.textContent = '✓ Copied'; setTimeout(() => { icon.textContent = old; }, 2000)" style="cursor: pointer; background: transparent; border: none; color: #8b949e; font-size: 11px; font-family: monospace; padding: 3px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;">
+              <span>Copy</span>
+            </button>
+          </div>
+          <div style="padding: 14px; overflow-x: auto; background: #0d1117;">
+            <pre style="margin: 0; background: transparent; border: none; padding: 0;"><code class="hljs" style="background: transparent; padding: 0; font-size: 13px; line-height: 1.6; font-family: monospace; color: #c9d1d9;">${highlighted}</code></pre>
+          </div>
+        </div>`;
+        codeBlocks.push(blockHtml);
+        return placeholder + (codeBlocks.length - 1) + placeholder;
+      });
+
+      processed = esc(processed)
+        .replace(/`([^`]+)`/g, (_, inlineCode) => {
+          const cleanInline = inlineCode.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&apos;/g, "'");
+          return '<code style="background: rgba(110, 118, 129, 0.4); color: #79c0ff; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px;">' + cleanInline.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</code>';
+        })
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+
+      return processed.replace(new RegExp(placeholder + '(\\d+)' + placeholder, 'g'), (_, idx) => codeBlocks[Number(idx)]);
+    }
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    function showMsg(el, txt, type) { el.textContent = txt; el.className = `auth-msg ${type}`; }
+
+    // ── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────────
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closePicker();
+    });
+  </script>
+</body>
+
+</html>
